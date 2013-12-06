@@ -1,10 +1,10 @@
 package com.tomasznosal;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,11 +13,9 @@ import android.view.ViewGroup;
 
 public class SplashActivity extends ActionBarActivity {
 
-    private Thread threadMainActivity;
-    private boolean stop = false;
+    Handler myHandler = new Handler();
+    Runnable myRunnable;
     private static final int SPLASHTIME = 5000;
-    private static final int PARTOFSPLASHTIME = 100;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,53 +28,26 @@ public class SplashActivity extends ActionBarActivity {
                     .commit();
         }
 
-        threadMainActivity = new Thread() {
+        myHandler.postDelayed(myRunnable=new Runnable(){
             @Override
             public void run() {
-                super.run();
-                try {
-                    int time = 0;
-                    while (!stop && time <= SPLASHTIME) {
-                        sleep(PARTOFSPLASHTIME);
-                        time += PARTOFSPLASHTIME;
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (!stop) {
-                        startActivity(new Intent(getApplicationContext(),
-                                MainActivity.class));
-                        finish();
-                    } else {
-                        finish();
-                    }
-                }
+                Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                startActivity(i);
+                finish();
             }
-        };
-        threadMainActivity.start();
+        },SPLASHTIME);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        myHandler.removeCallbacks(myRunnable);
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            if (threadMainActivity.isAlive()) {
-                this.stop = true;
-            }
-            return true;
-        } else{
-            return super.onKeyDown(keyCode, event);
-        }
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.splash, menu);
         return true;
