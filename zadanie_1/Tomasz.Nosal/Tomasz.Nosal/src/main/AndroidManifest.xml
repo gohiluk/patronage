@@ -23,7 +23,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:theme="@style/AppTheme"
             android:name="com.tomasznosal.MainActivity"
             android:label="@string/title_activity_main" >
         </activity>
