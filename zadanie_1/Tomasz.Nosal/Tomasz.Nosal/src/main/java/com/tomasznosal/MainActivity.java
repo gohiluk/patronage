@@ -3,8 +3,6 @@ package com.tomasznosal;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,8 +10,6 @@ import android.view.View.OnClickListener;
 
 public class MainActivity extends Activity implements OnClickListener {
 
-    EditText textResult;
-    EditText smallTextResult;
     private static final char PLUS='+';
     private static final char MINUS='-';
     private static final char MULTI='*';
@@ -24,6 +20,8 @@ public class MainActivity extends Activity implements OnClickListener {
     private static final Integer WAITING_TIME=1000;
     private static final Float ERROR_CODE=-1.f;
     private static final Float NEUTRAL_NUMBER=1.f;
+    EditText textResult;
+    EditText smallTextResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,27 +41,6 @@ public class MainActivity extends Activity implements OnClickListener {
         }
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     @Override
     public void onClick(View v) {
         String prevResult = textResult.getText().toString();
@@ -71,147 +48,19 @@ public class MainActivity extends Activity implements OnClickListener {
         int lengthSPR = smallPrevResult.length();
         switch (v.getId()) {
             case R.id.buttonAdd:
-                if (!smallPrevResult.isEmpty()) {
-                    if (smallPrevResult.isEmpty()
-                            && !prevResult.isEmpty()
-                            && (smallPrevResult.charAt(lengthSPR - 1) != PLUS
-                            || smallPrevResult.charAt(lengthSPR - 1) != MINUS
-                            || smallPrevResult.charAt(lengthSPR - 1) != MULTI || smallPrevResult
-                            .charAt(lengthSPR - 1) != DIV)) {
-                        smallTextResult.setText(prevResult + PLUS);
-                        textResult.setText("");
-                    }
-                    if (smallPrevResult.charAt(lengthSPR - 1) == MINUS
-                            || smallPrevResult.charAt(lengthSPR - 1) == MULTI
-                            || smallPrevResult.charAt(lengthSPR - 1) == DIV) {
-                        String tmp = smallPrevResult.substring(0, lengthSPR - 1);
-                        smallTextResult.setText(tmp + PLUS);
-                    }
-                } else {
-                    if (!prevResult.isEmpty()) {
-                        smallTextResult.setText(prevResult + PLUS);
-                        textResult.setText("");
-                    }
-                }
+                buttonAddPressed(prevResult, smallPrevResult, lengthSPR);
                 break;
             case R.id.buttonSub:
-                if (!smallPrevResult.isEmpty()) {
-                    if (smallPrevResult.isEmpty()
-                            && !prevResult.isEmpty()
-                            && (smallPrevResult.charAt(lengthSPR - 1) != PLUS
-                            || smallPrevResult.charAt(lengthSPR - 1) != MINUS
-                            || smallPrevResult.charAt(lengthSPR - 1) != MULTI || smallPrevResult
-                            .charAt(lengthSPR - 1) != DIV)) {
-                        smallTextResult.setText(prevResult + MINUS);
-                        textResult.setText("");
-                    }
-                    if (smallPrevResult.charAt(lengthSPR - 1) == PLUS
-                            || smallPrevResult.charAt(lengthSPR - 1) == MULTI
-                            || smallPrevResult.charAt(lengthSPR - 1) == DIV) {
-                        String tmp = smallPrevResult.substring(0, lengthSPR - 1);
-                        smallTextResult.setText(tmp + MINUS);
-                    }
-                } else {
-                    if (!prevResult.isEmpty()) {
-                        smallTextResult.setText(prevResult + MINUS);
-                        textResult.setText("");
-                    } else {
-                        textResult.setText(MINUS);
-                    }
-                }
+                buttonSubPressed(prevResult, smallPrevResult, lengthSPR);
                 break;
             case R.id.buttonMulti:
-                if (!smallPrevResult.isEmpty()) {
-                    if (smallPrevResult.isEmpty()
-                            && !prevResult.isEmpty()
-                            && (smallPrevResult.charAt(lengthSPR - 1) != PLUS
-                            || smallPrevResult.charAt(lengthSPR - 1) != MINUS
-                            || smallPrevResult.charAt(lengthSPR - 1) != MULTI || smallPrevResult
-                            .charAt(lengthSPR - 1) != DIV)) {
-                        smallTextResult.setText(prevResult + MULTI);
-                        textResult.setText("");
-                    }
-                    if (smallPrevResult.charAt(lengthSPR - 1) == MINUS
-                            || smallPrevResult.charAt(lengthSPR - 1) == PLUS
-                            || smallPrevResult.charAt(lengthSPR - 1) == DIV) {
-                        String tmp = smallPrevResult.substring(0, lengthSPR - 1);
-                        smallTextResult.setText(tmp + MULTI);
-                    }
-                } else {
-                    if (!prevResult.isEmpty()) {
-                        smallTextResult.setText(prevResult + MULTI);
-                        textResult.setText("");
-                    }
-                }
+                buttonMultiPressed(prevResult, smallPrevResult, lengthSPR);
                 break;
             case R.id.buttonDiv:
-                if (!smallPrevResult.isEmpty()) {
-                    if (smallPrevResult.isEmpty()
-                            && !prevResult.isEmpty()
-                            && (smallPrevResult.charAt(lengthSPR - 1) != PLUS
-                            || smallPrevResult.charAt(lengthSPR - 1) != MINUS
-                            || smallPrevResult.charAt(lengthSPR - 1) != MULTI || smallPrevResult
-                            .charAt(lengthSPR - 1) != DIV)) {
-                        smallTextResult.setText(prevResult + DIV);
-                        textResult.setText("");
-                    }
-                    if (smallPrevResult.charAt(lengthSPR - 1) == MINUS
-                            || smallPrevResult.charAt(lengthSPR - 1) == PLUS
-                            || smallPrevResult.charAt(lengthSPR - 1) == MULTI) {
-                        String tmp = smallPrevResult.substring(0, lengthSPR - 1);
-                        smallTextResult.setText(tmp + DIV);
-                    }
-                } else {
-                    if (!prevResult.isEmpty()) {
-                        smallTextResult.setText(prevResult + DIV);
-                        textResult.setText("");
-                    }
-                }
+                buttonDivPressed(prevResult, smallPrevResult, lengthSPR);
                 break;
             case R.id.buttonEqualsSign:
-                if (!smallPrevResult.isEmpty() && !prevResult.isEmpty()) {
-                    String num1String = smallPrevResult.substring(0, lengthSPR - 1);
-                    Float num1 = ERROR_CODE;
-                    Float num2 = NEUTRAL_NUMBER;
-                    try {
-                        num1 = Float.parseFloat(num1String);
-                        num2 = Float.parseFloat(prevResult);
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                    }
-                    if (smallPrevResult.charAt(lengthSPR - 1) == PLUS) {
-                        smallTextResult.setText("");
-                        Float result = num1 + num2;
-                        textResult.setText(result.toString());
-                    }
-                    if (smallPrevResult.charAt(lengthSPR - 1) == MINUS) {
-                        smallTextResult.setText("");
-                        Float result = num1 - num2;
-                        textResult.setText(result.toString());
-                    }
-                    if (smallPrevResult.charAt(lengthSPR - 1) == MULTI) {
-                        smallTextResult.setText("");
-                        Float result = num1 * num2;
-                        textResult.setText(result.toString());
-                    }
-                    if (smallPrevResult.charAt(lengthSPR - 1) == DIV) {
-                        smallTextResult.setText("");
-                        if (!ZERO.equals(num2)) {
-                            Float result = num1 / num2;
-                            textResult.setText(result.toString());
-                        } else {
-                            textResult.setText(CANTDIVIDEBY0);
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                public void run() {
-                                    textResult.setText("");
-                                    smallTextResult.setText("");
-                                }
-                            }, WAITING_TIME);
-
-                        }
-                    }
-                }
+                buttonEqualsSignPressed(prevResult, smallPrevResult, lengthSPR);
                 break;
             case R.id.buttonDot:
                 if (!prevResult.contains(DOT)) {
@@ -228,5 +77,157 @@ public class MainActivity extends Activity implements OnClickListener {
         }
     }
 
+    private void buttonAddPressed(String prevResult, String smallPrevResult, int lengthSPR){
+        if (!smallPrevResult.isEmpty()) {
+            if (checkIfThereIsntAnySignAndIfItIsPossibleToAdd(prevResult, smallPrevResult, lengthSPR)) {
+                smallTextResult.setText(prevResult + PLUS);
+                textResult.setText("");
+            }
+            if (ifLastSignIsDifferentThanPlus(smallPrevResult, lengthSPR)) {
+                String tmp = smallPrevResult.substring(0, lengthSPR - 1);
+                smallTextResult.setText(tmp + PLUS);
+            }
+        } else {
+            if (!prevResult.isEmpty()) {
+                smallTextResult.setText(prevResult + PLUS);
+                textResult.setText("");
+            }
+        }
+    }
+
+    private boolean checkIfThereIsntAnySignAndIfItIsPossibleToAdd(String prevResult, String smallPrevResult, int lengthSPR){
+        return smallPrevResult.isEmpty()
+                && !prevResult.isEmpty()
+                && (smallPrevResult.charAt(lengthSPR - 1) != PLUS
+                || smallPrevResult.charAt(lengthSPR - 1) != MINUS
+                || smallPrevResult.charAt(lengthSPR - 1) != MULTI
+                || smallPrevResult.charAt(lengthSPR - 1) != DIV);
+    }
+
+    private boolean ifLastSignIsDifferentThanPlus(String smallPrevResult, int lengthSPR){
+        return smallPrevResult.charAt(lengthSPR - 1) == MINUS
+                || smallPrevResult.charAt(lengthSPR - 1) == MULTI
+                || smallPrevResult.charAt(lengthSPR - 1) == DIV;
+    }
+
+    private void buttonSubPressed(String prevResult, String smallPrevResult, int lengthSPR){
+        if (!smallPrevResult.isEmpty()) {
+            if (checkIfThereIsntAnySignAndIfItIsPossibleToAdd(prevResult, smallPrevResult, lengthSPR)) {
+                smallTextResult.setText(prevResult + MINUS);
+                textResult.setText("");
+            }
+            if (ifLastSignIsDifferentThanMinus(smallPrevResult, lengthSPR)) {
+                String tmp = smallPrevResult.substring(0, lengthSPR - 1);
+                smallTextResult.setText(tmp + MINUS);
+            }
+        } else {
+            if (!prevResult.isEmpty()) {
+                smallTextResult.setText(prevResult + MINUS);
+                textResult.setText("");
+            } else {
+                textResult.setText(MINUS);
+            }
+        }
+    }
+
+    private boolean ifLastSignIsDifferentThanMinus(String smallPrevResult, int lengthSPR){
+        return smallPrevResult.charAt(lengthSPR - 1) == PLUS
+                || smallPrevResult.charAt(lengthSPR - 1) == MULTI
+                || smallPrevResult.charAt(lengthSPR - 1) == DIV;
+    }
+
+    private void buttonMultiPressed(String prevResult, String smallPrevResult, int lengthSPR){
+        if (!smallPrevResult.isEmpty()) {
+            if (checkIfThereIsntAnySignAndIfItIsPossibleToAdd(prevResult, smallPrevResult, lengthSPR)) {
+                smallTextResult.setText(prevResult + MULTI);
+                textResult.setText("");
+            }
+            if (ifLastSignIsDifferentThanMultiplicationSign(smallPrevResult, lengthSPR)) {
+                String tmp = smallPrevResult.substring(0, lengthSPR - 1);
+                smallTextResult.setText(tmp + MULTI);
+            }
+        } else {
+            if (!prevResult.isEmpty()) {
+                smallTextResult.setText(prevResult + MULTI);
+                textResult.setText("");
+            }
+        }
+    }
+
+    private boolean ifLastSignIsDifferentThanMultiplicationSign(String smallPrevResult, int lengthSPR){
+        return smallPrevResult.charAt(lengthSPR - 1) == PLUS
+                || smallPrevResult.charAt(lengthSPR - 1) == MINUS
+                || smallPrevResult.charAt(lengthSPR - 1) == DIV;
+    }
+
+    private void buttonDivPressed(String prevResult, String smallPrevResult, int lengthSPR){
+        if (!smallPrevResult.isEmpty()) {
+            if (checkIfThereIsntAnySignAndIfItIsPossibleToAdd(prevResult, smallPrevResult, lengthSPR)) {
+                smallTextResult.setText(prevResult + DIV);
+                textResult.setText("");
+            }
+            if (ifLastSignIsDifferentThanDivisionSign(smallPrevResult, lengthSPR)) {
+                String tmp = smallPrevResult.substring(0, lengthSPR - 1);
+                smallTextResult.setText(tmp + DIV);
+            }
+        } else {
+            if (!prevResult.isEmpty()) {
+                smallTextResult.setText(prevResult + DIV);
+                textResult.setText("");
+            }
+        }
+    }
+
+    private boolean ifLastSignIsDifferentThanDivisionSign(String smallPrevResult, int lengthSPR){
+        return smallPrevResult.charAt(lengthSPR - 1) == PLUS
+                || smallPrevResult.charAt(lengthSPR - 1) == MINUS
+                || smallPrevResult.charAt(lengthSPR - 1) == MULTI;
+    }
+
+    private void buttonEqualsSignPressed(String prevResult, String smallPrevResult, int lengthSPR){
+        if (!smallPrevResult.isEmpty() && !prevResult.isEmpty()) {
+            String num1String = smallPrevResult.substring(0, lengthSPR - 1);
+            Float num1 = ERROR_CODE;
+            Float num2 = NEUTRAL_NUMBER;
+            try {
+                num1 = Float.parseFloat(num1String);
+                num2 = Float.parseFloat(prevResult);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            if (smallPrevResult.charAt(lengthSPR - 1) == PLUS) {
+                smallTextResult.setText("");
+                Float result = num1 + num2;
+                textResult.setText(result.toString());
+            }
+            if (smallPrevResult.charAt(lengthSPR - 1) == MINUS) {
+                smallTextResult.setText("");
+                Float result = num1 - num2;
+                textResult.setText(result.toString());
+            }
+            if (smallPrevResult.charAt(lengthSPR - 1) == MULTI) {
+                smallTextResult.setText("");
+                Float result = num1 * num2;
+                textResult.setText(result.toString());
+            }
+            if (smallPrevResult.charAt(lengthSPR - 1) == DIV) {
+                smallTextResult.setText("");
+                if (!ZERO.equals(num2)) {
+                    Float result = num1 / num2;
+                    textResult.setText(result.toString());
+                } else {
+                    textResult.setText(CANTDIVIDEBY0);
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            textResult.setText("");
+                            smallTextResult.setText("");
+                        }
+                    }, WAITING_TIME);
+
+                }
+            }
+        }
+    }
 
 }
