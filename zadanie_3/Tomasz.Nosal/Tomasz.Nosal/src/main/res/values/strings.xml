@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">testZadanie3</string>
+    <string name="add">Add</string>
+    <string name="title_activity_add">AddActivity</string>
+    <string name="title_activity_add_type">AddTypeActivity</string>
+    <string name="cancel">Cancel</string>
+    <string name="TypeOfExpenditure">Type of expenditure</string>
+    <string name="action_addType">Add type</string>
+    <string name="name">Name</string>
+    <string name="value">Value</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="action_deleteEditType">Delete/edit type</string>
+    <string name="title_activity_delete_edit_type">DeleteEditActivity</string>
+    <string name="date">Date</string>
+
+</resources>
