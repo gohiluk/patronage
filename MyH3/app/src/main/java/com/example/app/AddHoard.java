@@ -11,13 +11,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,21 +30,34 @@ public class AddHoard extends Activity {
     String imagePath = null;
     EditText editTextName;
     EditText editTextDescription;
+    ImageView iv;
     final Context context = this;
     static final String NOT_UNIQUE_NAME = "Name should be unique. This name already exists.";
     static final String EMPTY_FIELD_NAME = "Name cannot be empty. Please type name.";
     static final String IMG_PATH = "imgPath";
+    Intent previouslyIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_hoard);
 
-        ImageView iv = (ImageView) findViewById(R.id.imageView);
+        previouslyIntent = getIntent();
+        editTextName = (EditText) findViewById(R.id.editTextName);
+        editTextDescription = (EditText) findViewById(R.id.editTextDescription);
+        Button buttonDone = (Button) findViewById(R.id.button);
+        buttonDone.setOnClickListener(buttonDone_onClickListener);
+
+        iv = (ImageView) findViewById(R.id.imageView);
         Resources res = getResources();
         int id = R.drawable.gallery_icon;
-        Bitmap myBitmap = BitmapFactory.decodeResource(res, id);
-        iv.setImageBitmap(myBitmap);
+        if (previouslyIntent.getStringExtra(MainActivity.MODE).equals(MainActivity.ADD)) {
+            Bitmap myBitmap = BitmapFactory.decodeResource(res, id);
+            iv.setImageBitmap(myBitmap);
+        }
+        if (previouslyIntent.getStringExtra(MainActivity.MODE).equals(MainActivity.EDIT)) {
+            modeEdit();
+        }
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,40 +66,62 @@ public class AddHoard extends Activity {
             }
         });
 
-        editTextName = (EditText) findViewById(R.id.editTextName);
-        editTextDescription = (EditText) findViewById(R.id.editTextDescription);
+    }
 
-        Button buttonDone = (Button) findViewById(R.id.button);
-        buttonDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ArrayList<String> listOfNames= new ArrayList<>();
-                Cursor c = getContentResolver().query(DatabaseProvider.CONTENT_URI_HOARD, null, null, null, null);
-                assert c != null;
-                if (c.moveToFirst()) {
-                    do {
-                        listOfNames.add(c.getString(c.getColumnIndex(DatabaseHandler.NAME)));
-                    } while (c.moveToNext());
-                }
+    private void modeEdit() {
+        String [] selectionArgs = {previouslyIntent.getStringExtra(DatabaseHandler.NAME)};
+        Cursor c = getContentResolver().query(DatabaseProvider.CONTENT_URI_HOARD, null, DatabaseHandler.NAME+"=?",selectionArgs,null);
+        if (c != null) {
+            if ( c.moveToFirst() ) {
+                String name = c.getString(c.getColumnIndex(DatabaseHandler.NAME));
+                imagePath = c.getString(c.getColumnIndex(DatabaseHandler.IMAGE_PATH));
+                String description = c.getString(c.getColumnIndex(DatabaseHandler.DESCRIPTION));
+                Log.d("TAG", name + " " + imagePath + " " + description);
+                editTextName.setText(name);
+                editTextDescription.setText(description);
+                Bitmap myBitmap = BitmapFactory.decodeFile(imagePath);
+                iv.setImageBitmap(myBitmap);
+            }
+        }
+    }
 
-                if(editTextName.getText().toString().equals("")) {
-                    showAlert(EMPTY_FIELD_NAME);
-                }
-                else {
-                    if (listOfNames.contains(editTextName.getText().toString())) {
-                        showAlert(NOT_UNIQUE_NAME);
-                    } else {
-                        values.put(DatabaseHandler.NAME, editTextName.getText().toString());
-                        values.put(DatabaseHandler.IMAGE_PATH, imagePath);
-                        values.put(DatabaseHandler.DESCRIPTION, editTextDescription.getText().toString());
+    final View.OnClickListener buttonDone_onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            ArrayList<String> listOfNames= new ArrayList<>();
+            Cursor c = getContentResolver().query(DatabaseProvider.CONTENT_URI_HOARD, null, null, null, null);
+            assert c != null;
+            if (c.moveToFirst()) {
+                do {
+                    listOfNames.add(c.getString(c.getColumnIndex(DatabaseHandler.NAME)));
+                } while (c.moveToNext());
+            }
+            if (previouslyIntent.getStringExtra(MainActivity.MODE).equals(MainActivity.EDIT)) {
+                listOfNames.remove(previouslyIntent.getStringExtra(DatabaseHandler.NAME));
+            }
+            if(editTextName.getText().toString().equals("")) {
+                showAlert(EMPTY_FIELD_NAME);
+            }
+            else {
+                if (listOfNames.contains(editTextName.getText().toString())) {
+                    showAlert(NOT_UNIQUE_NAME);
+                } else {
+                    values.put(DatabaseHandler.NAME, editTextName.getText().toString());
+                    values.put(DatabaseHandler.IMAGE_PATH, imagePath);
+                    values.put(DatabaseHandler.DESCRIPTION, editTextDescription.getText().toString());
+                    if (previouslyIntent.getStringExtra(MainActivity.MODE).equals(MainActivity.ADD)) {
                         getContentResolver().insert(DatabaseProvider.CONTENT_URI_HOARD, values);
-                        setResult(Activity.RESULT_OK, null);
-                        finish();
                     }
+                    if (previouslyIntent.getStringExtra(MainActivity.MODE).equals(MainActivity.EDIT)) {
+                        String [] selectionArgs = {previouslyIntent.getStringExtra(DatabaseHandler.NAME)};
+                        getContentResolver().update(DatabaseProvider.CONTENT_URI_HOARD, values, DatabaseHandler.NAME+"=?",selectionArgs);
+                    }
+                    setResult(Activity.RESULT_OK, null);
+                    finish();
                 }
             }
-        });
-    }
+        }
+    };
 
     private void showAlert(String title) {
         new AlertDialog.Builder(context)
@@ -109,8 +142,7 @@ public class AddHoard extends Activity {
                 File imgFile = new  File(imgPath);
                 if(imgFile.exists()){
                     Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                    ImageView myImage = (ImageView) findViewById(R.id.imageView);
-                    myImage.setImageBitmap(myBitmap);
+                    iv.setImageBitmap(myBitmap);
                     imagePath = imgPath;
                 }
             }
