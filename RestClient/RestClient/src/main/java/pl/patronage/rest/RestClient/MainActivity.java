@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +18,8 @@ import pl.patronage.rest.RestClient.model.User;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +57,7 @@ public class MainActivity extends ActionBarActivity {
             testUser.setUsername("tomek");
             testUser.setPassword("tomek");
 
-            UserHttpEngine userHttpEngine = new UserHttpEngine("http://78.133.154.18:8080/oauth/token/");
-            userHttpEngine.getAuthenticationCode(testUser);
+            new getAuthenticationCode().execute(testUser);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -95,6 +97,22 @@ public class MainActivity extends ActionBarActivity {
             else {
                 Log.d("TAG", "Jakis błąd przy dodawaniu");
             }
+        }
+    }
+
+
+    private class getAuthenticationCode extends AsyncTask<User, Void, String> {
+
+        @Override
+        protected String doInBackground(User... params) {
+            UserHttpEngine userHttpEngine = new UserHttpEngine("http://78.133.154.18:8080/oauth/token/");
+            return userHttpEngine.getAuthenticationCode(params[0]);
+        }
+
+        protected void onPostExecute(String response) {
+            textView = (TextView) findViewById(R.id.textView);
+            if (!response.isEmpty())
+            textView.setText(response);
         }
     }
 }

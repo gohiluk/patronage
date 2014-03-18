@@ -2,6 +2,9 @@ package pl.patronage.rest.RestClient.httpengine;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -16,8 +19,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.List;
 
+import pl.patronage.rest.RestClient.model.Token;
 import pl.patronage.rest.RestClient.model.User;
 
 /**
@@ -51,15 +56,16 @@ public class UserHttpEngine implements IHttpEngine<User> {
             if(response!=null){
                 HttpEntity responseEntity = response.getEntity();
                 String HTTP_response = null;
-                String stringResponse =null;
                 HTTP_response = EntityUtils.toString(responseEntity, HTTP.UTF_8);
                 Log.d("TAG", "Jsontext = " + HTTP_response);
-                //jezeli odpowiedz zawiera kod Created
-                if (HTTP_response.contains("200"))
-                {
-                    stringResponse = getASCIIContentFromEntity(responseEntity);
-                    Log.d("TAG", stringResponse);
-                    return null;
+                //jezeli odpowiedz zawiera kod OK
+                if (HTTP_response.contains("error_code")){
+                    return "bład";
+                } else {
+                    Type tokenType = new TypeToken<Token>(){}.getType();
+                    Token token = new Gson().fromJson( HTTP_response , tokenType);
+                    Log.d("TAG",token.getAccess_token());
+                    return token.getAccess_token();
                 }
             }
         } catch(Exception e) {

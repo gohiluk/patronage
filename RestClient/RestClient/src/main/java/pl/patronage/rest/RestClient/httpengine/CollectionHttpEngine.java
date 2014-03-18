@@ -54,8 +54,9 @@ public class CollectionHttpEngine implements IHttpEngine<Collection> {
             HttpEntity entity = response.getEntity();
             stringResponse = getASCIIContentFromEntity(entity);
 
-            Type collectionType = new TypeToken<List<Collection>>(){}.getType();
-            List<Collection> collections = (List<Collection>) new Gson().fromJson( stringResponse , collectionType);
+            Type collectionType = new TypeToken<List<Collection>>() {
+            }.getType();
+            List<Collection> collections = (List<Collection>) new Gson().fromJson(stringResponse, collectionType);
 
             return collections;
         } catch (Exception e) {
@@ -93,24 +94,25 @@ public class CollectionHttpEngine implements IHttpEngine<Collection> {
             json.put("items_number", collection.getItems_number());
             json.put("created_date", collection.getCreated_date());
             json.put("modified_date", collection.getModified_date());
-            StringEntity se = new StringEntity( json.toString());
+            StringEntity se = new StringEntity(json.toString());
             se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             post.setEntity(se);
             response = httpClient.execute(post);
 
             /*Checking response */
-            if(response!=null){
+            if (response != null) {
                 HttpEntity responseEntity = response.getEntity();
                 String HTTP_response = null;
                 HTTP_response = EntityUtils.toString(responseEntity, HTTP.UTF_8);
                 Log.d("TAG", "Jsontext = " + HTTP_response);
                 //jezeli odpowiedz zawiera kod Created
-                if (HTTP_response.contains("201"))
-                {
+                if (HTTP_response.contains("error_code")) {
+                    return false;
+                } else {
                     return true;
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -130,10 +132,10 @@ public class CollectionHttpEngine implements IHttpEngine<Collection> {
         InputStream in = entity.getContent();
         StringBuffer out = new StringBuffer();
         int n = 1;
-        while (n>0) {
+        while (n > 0) {
             byte[] b = new byte[4096];
-            n =  in.read(b);
-            if (n>0) out.append(new String(b, 0, n));
+            n = in.read(b);
+            if (n > 0) out.append(new String(b, 0, n));
         }
         return out.toString();
     }
