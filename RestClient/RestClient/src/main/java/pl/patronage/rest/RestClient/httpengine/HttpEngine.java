@@ -9,8 +9,10 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
@@ -31,20 +33,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.patronage.rest.RestClient.model.Collection;
+import pl.patronage.rest.RestClient.model.IModel;
 
 /**
  * Created by gohilukk on 17.03.14.
  */
-public class CollectionHttpEngine implements IHttpEngine<Collection> {
+public class HttpEngine<T> implements IHttpEngine<T> {
 
-    private String url;
+    protected String url;
 
-    public CollectionHttpEngine(String url) {
+    public HttpEngine(String url) {
         this.url = url;
     }
 
     @Override
-    public List<Collection> getList() {
+    public List<T> getList() {
         HttpClient httpClient = new DefaultHttpClient();
         HttpContext localContext = new BasicHttpContext();
         HttpGet httpGet = new HttpGet(url);
@@ -56,9 +59,9 @@ public class CollectionHttpEngine implements IHttpEngine<Collection> {
 
             Type collectionType = new TypeToken<List<Collection>>() {
             }.getType();
-            List<Collection> collections = (List<Collection>) new Gson().fromJson(stringResponse, collectionType);
+            List<T> items = (List<T>) new Gson().fromJson(stringResponse, collectionType);
 
-            return collections;
+            return items;
         } catch (Exception e) {
             //return e.getLocalizedMessage();
             return null;
@@ -66,12 +69,12 @@ public class CollectionHttpEngine implements IHttpEngine<Collection> {
     }
 
     @Override
-    public Collection get(int id) {
+    public T get(int id) {
         return null;
     }
 
     @Override
-    public boolean create(Collection collection) {
+    public boolean create(IModel item) {
         HttpClient httpClient = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000); //Timeout Limit
         HttpResponse response;
@@ -79,21 +82,9 @@ public class CollectionHttpEngine implements IHttpEngine<Collection> {
 
         try {
             HttpPost post = new HttpPost(url);
-            json.put("owner", collection.getOwner());
-            json.put("name", collection.getName());
-            json.put("description", collection.getDescription());
 
-            //Tagi obecnie nie dzialaja na serwerze
+            json = item.toJson();
 
-            /*JSONArray arrayTags = new JSONArray();
-            for (String s: collection.getTags()) {
-                arrayTags.put(s);
-            }
-
-            json.put("tags", arrayTags);*/
-            json.put("items_number", collection.getItems_number());
-            json.put("created_date", collection.getCreated_date());
-            json.put("modified_date", collection.getModified_date());
             StringEntity se = new StringEntity(json.toString());
             se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             post.setEntity(se);
@@ -119,12 +110,52 @@ public class CollectionHttpEngine implements IHttpEngine<Collection> {
     }
 
     @Override
-    public void update(Collection o) {
+    public void update(IModel item, int id) {
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000); //Timeout Limit
+        HttpResponse response;
 
+
+        try {
+            HttpPut httpPut = new HttpPut(url + "/" + id);
+            JSONObject json = item.toJson();
+
+            StringEntity se = new StringEntity(json.toString());
+            se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            httpPut.setEntity(se);
+            response = httpClient.execute(httpPut);
+
+            /*Checking response */
+            if (response != null) {
+                HttpEntity responseEntity = response.getEntity();
+                String HTTP_response = null;
+                HTTP_response = EntityUtils.toString(responseEntity, HTTP.UTF_8);
+                Log.d("TAG", "Jsontext = " + HTTP_response);
+                //jezeli odpowiedz zawiera kod Created
+                if (HTTP_response.contains("error_code")) {
+                    Log.d("TAG", "blad");
+                } else {
+                    Log.d("TAG", "zupdatowano id=" + id);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void remove(int id) {
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000); //Timeout Limit
+        HttpDelete httpDelete = new HttpDelete(url+"/"+Integer.toString(id));
+
+        Log.d("TAG",url+"/"+Integer.toString(id));
+
+        try {
+            HttpResponse httpResponse = httpClient.execute(httpDelete);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 

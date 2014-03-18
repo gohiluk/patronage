@@ -1,35 +1,40 @@
 package pl.patronage.rest.RestClient.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by gohilukk on 18.03.14.
  */
 public class Token {
 
-    private String access_token;
-    private int expires_in;
-    private String refresh_token;
+    @SerializedName("access_token")
+    private String accessToken;
+    @SerializedName("expires_in")
+    private int expiresIn;
+    @SerializedName("refresh_token")
+    private String refreshToken;
 
     public String getAccess_token() {
-        return access_token;
+        return accessToken;
     }
 
-    public void setAccess_token(String access_token) {
-        this.access_token = access_token;
+    public void setAccessToken(String access_token) {
+        this.accessToken = access_token;
     }
 
-    public int getExpires_in() {
-        return expires_in;
+    public int getExpiresTn() {
+        return expiresIn;
     }
 
-    public void setExpires_in(int expires_in) {
-        this.expires_in = expires_in;
+    public void setExpiresIn(int expires_in) {
+        this.expiresIn = expires_in;
     }
 
-    public String getRefresh_token() {
-        return refresh_token;
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
-    public void setRefresh_token(String refresh_token) {
-        this.refresh_token = refresh_token;
+    public void setRefreshToken(String refresh_token) {
+        this.refreshToken = refresh_token;
     }
 }

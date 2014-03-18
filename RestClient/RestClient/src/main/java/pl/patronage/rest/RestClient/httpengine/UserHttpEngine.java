@@ -22,18 +22,17 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import pl.patronage.rest.RestClient.model.IModel;
 import pl.patronage.rest.RestClient.model.Token;
 import pl.patronage.rest.RestClient.model.User;
 
 /**
  * Created by gohilukk on 18.03.14.
  */
-public class UserHttpEngine implements IHttpEngine<User> {
-
-    private String url;
+public class UserHttpEngine extends HttpEngine {
 
     public UserHttpEngine(String url) {
-        this.url = url;
+        super(url);
     }
 
     public String getAuthenticationCode(User user) {
@@ -72,42 +71,5 @@ public class UserHttpEngine implements IHttpEngine<User> {
             e.printStackTrace();
         }
         return null;
-    }
-
-    @Override
-    public List<User> getList() {
-        return null;
-    }
-
-    @Override
-    public User get(int id) {
-        return null;
-    }
-
-    @Override
-    public boolean create(User user) {
-        return false;
-    }
-
-    @Override
-    public void update(User user) {
-
-    }
-
-    @Override
-    public void remove(int id) {
-
-    }
-
-    protected String getASCIIContentFromEntity(HttpEntity entity) throws IllegalStateException, IOException {
-        InputStream in = entity.getContent();
-        StringBuffer out = new StringBuffer();
-        int n = 1;
-        while (n>0) {
-            byte[] b = new byte[4096];
-            n =  in.read(b);
-            if (n>0) out.append(new String(b, 0, n));
-        }
-        return out.toString();
     }
 }

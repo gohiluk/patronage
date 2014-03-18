@@ -1,11 +1,14 @@
 package pl.patronage.rest.RestClient.model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 /**
  * Created by gohilukk on 17.03.14.
  */
-public class Collection {
+public class Collection implements IModel {
 
     private String id;
     private String name;
@@ -95,5 +98,31 @@ public class Collection {
                 .append(created_date + ", ")
                 .append(modified_date);
         return sb.toString();
+    }
+
+    @Override
+    public JSONObject toJson() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        json.put("owner", getOwner());
+        json.put("name", getName());
+        json.put("description", getDescription());
+
+        /*
+        //Tagi obecnie nie dzialaja na serwerze
+
+        JSONArray arrayTags = new JSONArray();
+        for (String s: collection.getTags()) {
+        arrayTags.put(s);
+        }
+
+        json.put("tags", arrayTags);
+        */
+
+        json.put("items_number", getItems_number());
+        json.put("created_date", getCreated_date());
+        json.put("modified_date", getModified_date());
+
+        return json;
     }
 }

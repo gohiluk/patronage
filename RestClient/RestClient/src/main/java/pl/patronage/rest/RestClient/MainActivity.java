@@ -8,10 +8,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import java.util.Arrays;
 import java.util.List;
 
-import pl.patronage.rest.RestClient.httpengine.CollectionHttpEngine;
+import pl.patronage.rest.RestClient.httpengine.HttpEngine;
 import pl.patronage.rest.RestClient.httpengine.UserHttpEngine;
 import pl.patronage.rest.RestClient.model.Collection;
 import pl.patronage.rest.RestClient.model.User;
@@ -30,7 +29,7 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -47,8 +46,8 @@ public class MainActivity extends ActionBarActivity {
         }
         if (id == R.id.action_add) {
             Collection testCollection = new Collection();
-            testCollection.setOwner("tomek2");
-            testCollection.setName("puzzle2");
+            testCollection.setOwner("tomek9");
+            testCollection.setName("puzzle9");
             //testCollection.setTags(Arrays.asList("raz", "dwa", "trzy"));
             new LongRunningPostIO().execute(testCollection);
         }
@@ -58,6 +57,16 @@ public class MainActivity extends ActionBarActivity {
             testUser.setPassword("tomek");
 
             new getAuthenticationCode().execute(testUser);
+        }
+        if (id == R.id.action_delete) {
+            new removeCollection().execute(107);
+        }
+        if (id == R.id.action_update) {
+            Collection testCollection = new Collection();
+            testCollection.setId("89");
+            testCollection.setOwner("tomek55");
+            testCollection.setName("puzzle55");
+            new updateCollection().execute(testCollection);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -69,7 +78,7 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected List<Collection> doInBackground(Void... params) {
-            CollectionHttpEngine collectionHttpEngine = new CollectionHttpEngine("http://78.133.154.39:2080/collections");
+            HttpEngine collectionHttpEngine = new HttpEngine<Collection>("http://78.133.154.39:2080/collections");
             return collectionHttpEngine.getList();
         }
 
@@ -86,7 +95,7 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected Boolean doInBackground(Collection... params) {
-            CollectionHttpEngine collectionHttpEngine = new CollectionHttpEngine("http://78.133.154.39:2080/collections");
+            HttpEngine collectionHttpEngine = new HttpEngine("http://78.133.154.39:2080/collections");
             return collectionHttpEngine.create(params[0]);
         }
 
@@ -113,6 +122,28 @@ public class MainActivity extends ActionBarActivity {
             textView = (TextView) findViewById(R.id.textView);
             if (!response.isEmpty())
             textView.setText(response);
+        }
+    }
+
+
+
+    private class removeCollection extends AsyncTask<Integer, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            HttpEngine collectionHttpEngine = new HttpEngine("http://78.133.154.39:2080/collections");
+            collectionHttpEngine.remove(params[0]);
+            return null;
+        }
+    }
+
+    private class updateCollection extends AsyncTask<Collection, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Collection... params) {
+            HttpEngine collectionHttpEngine = new HttpEngine("http://78.133.154.39:2080/collections");
+            collectionHttpEngine.update(params[0],Integer.parseInt(params[0].getId()));
+            return null;
         }
     }
 }
