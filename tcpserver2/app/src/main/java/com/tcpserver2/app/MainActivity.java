@@ -1,16 +1,15 @@
 package com.tcpserver2.app;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 
 public class MainActivity extends BaseActivity {
+
+    public static final String COMMAND = "command";
+    public static final String LOCK = "lock";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,17 +31,17 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
         Intent i = new Intent(MainActivity.this, MyService.class);
         MainActivity.this.stopService(i);
-        Log.d("TAG", "zatrzymano serwis");
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("TAG","onNewIntent");
-        String command = intent.getStringExtra("command");
-        if (command.equals("lock")){
-            Intent i = new Intent(MainActivity.this, LockAcitivity.class);
-            startActivity(i);
+        String command = intent.getStringExtra(COMMAND);
+        if (command != null) {
+            if (command.equals(LOCK)) {
+                Intent i = new Intent(MainActivity.this, LockAcitivity.class);
+                startActivity(i);
+            }
         }
     }
 }

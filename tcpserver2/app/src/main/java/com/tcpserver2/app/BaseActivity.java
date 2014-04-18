@@ -7,12 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-
 
 public class BaseActivity extends Activity {
+
+    public static final String LOCK = "lock";
+    public static final String UNLOCK = "unlock";
+    public static final String FILTER = "notification";
+    public static final String MY_MESSAGE = "myMessage";
+    public static final String COMMAND = "command";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +23,6 @@ public class BaseActivity extends Activity {
         if (!isMyServiceRunning()) {
             Intent i = new Intent(getBaseContext(), MyService.class);
             getBaseContext().startService(i);
-            Log.d("TAG","wystartowano serwis");
         }
 
     }
@@ -29,14 +30,12 @@ public class BaseActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("TAG","register receiver");
-        registerReceiver(receiver, new IntentFilter("notification"));
+        registerReceiver(receiver, new IntentFilter(FILTER));
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("TAG","UNregister receiver");
         unregisterReceiver(receiver);
     }
 
@@ -45,17 +44,15 @@ public class BaseActivity extends Activity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String stringExtra = intent.getStringExtra("mytext");
+            String stringExtra = intent.getStringExtra(MY_MESSAGE);
             if (stringExtra != null) {
-                if (stringExtra.equals("lock")){
-                    Log.d("TAG","onReceive: lock");
+                if (stringExtra.equals(LOCK)){
                     Intent intent2 = new Intent(BaseActivity.this, MainActivity.class);
                     intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    intent2.putExtra("command","lock");
+                    intent2.putExtra(COMMAND,LOCK);
                     startActivity(intent2);
                 }
-                if (stringExtra.equals("unlock")) {
-                    Log.d("TAG", "onReceive: unlock");
+                if (stringExtra.equals(UNLOCK)) {
                     finish();
                 }
             }
