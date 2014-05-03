@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tcpserver2.app" >
 
+    <uses-permission android:name="android.permission.INTERNET" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >
+    </uses-permission>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -21,7 +26,7 @@
             android:label="@string/title_activity_base" >
         </activity>
 
-        <service android:name="com.tcpserver2.app.MyService" />
+        <service android:name="com.tcpserver2.app.ListeningService" />
 
         <activity
             android:name="com.tcpserver2.app.AActivity"
@@ -36,10 +41,5 @@
             android:label="@string/title_activity_b" >
         </activity>
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" >
-    </uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >
-    </uses-permission>
 
 </manifest>

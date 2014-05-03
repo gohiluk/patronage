@@ -9,8 +9,8 @@
     tools:context="com.tcpserver2.app.LockAcitivity">
 
     <TextView
-        android:text="LOCKED"
-        android:textSize="80dp"
+        android:text="@string/locked"
+        android:textSize="80sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"

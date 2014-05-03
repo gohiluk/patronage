@@ -8,16 +8,16 @@ import android.widget.Button;
 
 public class MainActivity extends BaseActivity {
 
-    public static final String COMMAND = "command";
-    public static final String LOCK = "lock";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setUpGui();
+    }
 
-        Button b = (Button) findViewById(R.id.buttonStartA);
-        b.setOnClickListener(new View.OnClickListener() {
+    private void setUpGui() {
+        Button buttonGoToNextActivity = (Button) findViewById(R.id.buttonStartA);
+        buttonGoToNextActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AActivity.class);
@@ -29,19 +29,23 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Intent i = new Intent(MainActivity.this, MyService.class);
-        MainActivity.this.stopService(i);
+        Intent intent = new Intent(MainActivity.this, ListeningService.class);
+        stopService(intent);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        String command = intent.getStringExtra(COMMAND);
-        if (command != null) {
-            if (command.equals(LOCK)) {
-                Intent i = new Intent(MainActivity.this, LockAcitivity.class);
-                startActivity(i);
-            }
+        String commandToLock = intent.getStringExtra(BaseActivity.COMMAND_TO_LOCK);
+        if (commandToLock != null) {
+            startLockActivityIfStringEqualsLock(commandToLock);
+        }
+    }
+
+    private void startLockActivityIfStringEqualsLock(String commandToLock) {
+        if (commandToLock.equals(ListeningService.LOCK)) {
+            Intent i = new Intent(MainActivity.this, LockAcitivity.class);
+            startActivity(i);
         }
     }
 }

@@ -9,14 +9,14 @@
     tools:context="com.tcpserver2.app.MainActivity">
 
     <TextView
-        android:text="MainActivity"
+        android:text="@string/activity_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="start A"
+        android:text="@string/startA"
         android:id="@+id/buttonStartA"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"

@@ -2,11 +2,15 @@
 <resources>
 
     <string name="app_name">tcpserver2</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
     <string name="title_activity_base">BaseActivity</string>
     <string name="title_activity_a">AActivity</string>
     <string name="title_activity_lock_acitivity">LockAcitivity</string>
     <string name="title_activity_b">BActivity</string>
+    <string name="activity_a">Activity A</string>
+    <string name="activity_b">Activity B</string>
+    <string name="activity_main">Main Activity</string>
+    <string name="locked">LOCKED</string>
+    <string name="startA">start A</string>
+    <string name="startB">start B</string>
 
 </resources>

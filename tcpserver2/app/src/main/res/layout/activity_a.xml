@@ -9,7 +9,7 @@
     tools:context="com.tcpserver2.app.AActivity">
 
     <TextView
-        android:text="Activity A"
+        android:text="@string/activity_a"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView" />
@@ -17,7 +17,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start B"
+        android:text="@string/startB"
         android:id="@+id/buttonStartB"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
